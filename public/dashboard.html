@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - User Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .form-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .form-section h2 {
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            flex: 1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-right: 0.5rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .data-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .data-table th {
+            background: #f8f9fa;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .data-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .error {
+            color: #e74c3c;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .success {
+            color: #27ae60;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            right: 1rem;
+            top: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .no-data {
+            text-align: center;
+            color: #666;
+            padding: 2rem;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <h1>Dashboard</h1>
+            <div class="user-info">
+                <span id="userInfo"></span>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Form Section -->
+        <div class="form-section">
+            <h2 id="formTitle">Add New Data</h2>
+            <form id="dataForm">
+                <input type="hidden" id="editId">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="title">Title:</label>
+                        <input type="text" id="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="status">Status:</label>
+                        <select id="status">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="description">Description:</label>
+                    <textarea id="description"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" id="submitBtn">Add Data</button>
+                <button type="button" class="btn btn-secondary" id="cancelBtn" onclick="cancelEdit()" style="display: none;">Cancel</button>
+                <div id="formMessage"></div>
+            </form>
+        </div>
+
+        <!-- Data Section -->
+        <div class="data-section">
+            <h2>Your Data</h2>
+            <div id="dataContainer">
+                <table class="data-table" id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeDeleteModal()">&times;</span>
+            <h2>Confirm Delete</h2>
+            <p>Are you sure you want to delete this item?</p>
+            <div style="margin-top: 1rem;">
+                <button class="btn btn-danger" onclick="confirmDelete()">Delete</button>
+                <button class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentData = [];
+        let deleteId = null;
+
+        // Check authentication
+        const token = localStorage.getItem('token');
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+        if (!token) {
+            window.location.href = '/';
+        }
+
+        // Display user info
+        document.getElementById('userInfo').textContent = `Welcome, ${user.username}`;
+
+        // Load data on page load
+        loadData();
+
+        // Form submission
+        document.getElementById('dataForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const title = document.getElementById('title').value;
+            const description = document.getElementById('description').value;
+            const status = document.getElementById('status').value;
+            const editId = document.getElementById('editId').value;
+            const messageDiv = document.getElementById('formMessage');
+
+            try {
+                const url = editId ? `/api/data/${editId}` : '/api/data';
+                const method = editId ? 'PUT' : 'POST';
+
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ title, description, status }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    messageDiv.innerHTML = `<p class="success">${data.message}</p>`;
+                    document.getElementById('dataForm').reset();
+                    cancelEdit();
+                    loadData();
+                    setTimeout(() => {
+                        messageDiv.innerHTML = '';
+                    }, 3000);
+                } else {
+                    messageDiv.innerHTML = `<p class="error">${data.error}</p>`;
+                }
+            } catch (error) {
+                messageDiv.innerHTML = '<p class="error">Network error. Please try again.</p>';
+            }
+        });
+
+        // Load data function
+        async function loadData() {
+            try {
+                const response = await fetch('/api/data', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    currentData = await response.json();
+                    displayData();
+                } else if (response.status === 401 || response.status === 403) {
+                    logout();
+                } else {
+                    console.error('Failed to load data');
+                }
+            } catch (error) {
+                console.error('Network error:', error);
+            }
+        }
+
+        // Display data in table
+        function displayData() {
+            const tbody = document.getElementById('dataTableBody');
+            
+            if (currentData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="no-data">No data found. Add some data to get started!</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = currentData.map(item => `
+                <tr>
+                    <td>${escapeHtml(item.title)}</td>
+                    <td>${escapeHtml(item.description || 'No description')}</td>
+                    <td><span class="status-badge status-${item.status}">${item.status.toUpperCase()}</span></td>
+                    <td>${new Date(item.created_at).toLocaleDateString()}</td>
+                    <td>
+                        <button class="btn btn-warning btn-sm" onclick="editData(${item.id})">Edit</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteData(${item.id})">Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Edit function
+        function editData(id) {
+            const item = currentData.find(d => d.id === id);
+            if (!item) return;
+
+            document.getElementById('editId').value = id;
+            document.getElementById('title').value = item.title;
+            document.getElementById('description').value = item.description || '';
+            document.getElementById('status').value = item.status;
+            document.getElementById('formTitle').textContent = 'Edit Data';
+            document.getElementById('submitBtn').textContent = 'Update Data';
+            document.getElementById('cancelBtn').style.display = 'inline-block';
+
+            // Scroll to form
+            document.querySelector('.form-section').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Cancel edit function
+        function cancelEdit() {
+            document.getElementById('editId').value = '';
+            document.getElementById('dataForm').reset();
+            document.getElementById('formTitle').textContent = 'Add New Data';
+            document.getElementById('submitBtn').textContent = 'Add Data';
+            document.getElementById('cancelBtn').style.display = 'none';
+            document.getElementById('formMessage').innerHTML = '';
+        }
+
+        // Delete function
+        function deleteData(id) {
+            deleteId = id;
+            document.getElementById('deleteModal').style.display = 'block';
+        }
+
+        // Close delete modal
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').style.display = 'none';
+            deleteId = null;
+        }
+
+        // Confirm delete
+        async function confirmDelete() {
+            if (!deleteId) return;
+
+            try {
+                const response = await fetch(`/api/data/${deleteId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    loadData();
+                    closeDeleteModal();
+                    // Show success message briefly
+                    const messageDiv = document.getElementById('formMessage');
+                    messageDiv.innerHTML = `<p class="success">${data.message}</p>`;
+                    setTimeout(() => {
+                        messageDiv.innerHTML = '';
+                    }, 3000);
+                } else {
+                    alert(data.error || 'Failed to delete data');
+                }
+            } catch (error) {
+                alert('Network error. Please try again.');
+            }
+        }
+
+        // Logout function
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '/';
+        }
+
+        // Utility function to escape HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('deleteModal');
+            if (event.target === modal) {
+                closeDeleteModal();
+            }
+        }
+
+        // Add some button styling
+        const style = document.createElement('style');
+        style.textContent = `
+            .btn-sm {
+                padding: 0.375rem 0.75rem;
+                font-size: 0.875rem;
+                margin-right: 0.25rem;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
